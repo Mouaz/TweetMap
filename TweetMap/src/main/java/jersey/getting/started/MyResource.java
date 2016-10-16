@@ -49,7 +49,7 @@ public class MyResource {
 			sts.add(new SimpleTweet("le_user", "this is a laaaaarge content of a tweet", ((Math.random() * (180 - (-180))) - 180)+"", ((Math.random() * (180 - (-180))) - 180)+""));
 		}
 		*/
-    	return Fetcher.getTweets("vodafone",10);
+    	return Fetcher.getTweets("vodafone",100);
     }
 	
 }

@@ -36,7 +36,7 @@ loadTweets();
         	var labels = ['tweet','tweet'];
         	var markers = []
         	
-            
+            // doing it the old way 
             var data_file = "http://localhost:8080/TweetMap/webresources/myresource";
             var http_request = new XMLHttpRequest();
             try{
