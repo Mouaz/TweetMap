@@ -41,7 +41,15 @@ public class MyResource {
 	@GET 
 	@Produces(MediaType.APPLICATION_JSON)
     public ArrayList<SimpleTweet> getTweets() throws TwitterException {
-    	return Fetcher.getTweets("vodafone",1000);
+		
+		/** for front end debugging purposes
+		 * ArrayList<SimpleTweet> sts = new ArrayList<SimpleTweet>();
+		 
+		for(int i =0;i<10;i++){
+			sts.add(new SimpleTweet("le_user", "this is a laaaaarge content of a tweet", ((Math.random() * (180 - (-180))) - 180)+"", ((Math.random() * (180 - (-180))) - 180)+""));
+		}
+		*/
+    	return Fetcher.getTweets("vodafone",10);
     }
 	
 }

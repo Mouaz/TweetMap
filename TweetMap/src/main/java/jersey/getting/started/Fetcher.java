@@ -45,6 +45,8 @@ public class Fetcher {
         int numberOfTweets = count;
         long lastID = Long.MAX_VALUE;
         ArrayList<Status> tweets = new ArrayList<Status>();
+        ArrayList<SimpleTweet> sts = new ArrayList<SimpleTweet>();
+        SimpleTweet st = null;
         /**
          * multiple queries as workaround in order to get more than 100 tweets per query
          */
@@ -55,7 +57,16 @@ public class Fetcher {
             query.setCount(numberOfTweets - tweets.size());
           try {
             QueryResult result = twitter.search(query);
-            tweets.addAll(result.getTweets());
+            for (int i = 0; i < result.getTweets().size(); i++) {
+            	Status t = (Status) result.getTweets().get(i);
+            	/*
+            	 * Random coordinates added due to in api 1.1 tweets have no coordinates (Twitter doesn't allow anymore exact location of tweets)
+            	 * in streaming mode, locations are available
+            	 */
+            	st = new SimpleTweet(t.getUser().getScreenName(), t.getGeoLocation()+"", ((Math.random() * (180 - (-180))) - 180)+"", ((Math.random() * (180 - (-180))) - 180)+"");
+           	 sts.add(st);
+            }
+//            tweets.addAll(result.getTweets());
             for (Status t: tweets) 
               if(t.getId() < lastID) lastID = t.getId();
 
@@ -63,20 +74,10 @@ public class Fetcher {
 
           catch (TwitterException te) {
         	  te.printStackTrace();
+        	  return sts;
           }; 
           query.setMaxId(lastID-1);
         }
-        ArrayList<SimpleTweet> sts = new ArrayList<SimpleTweet>();
-        SimpleTweet st = null;
-        for (int i = 0; i < tweets.size(); i++) {
-        	Status t = (Status) tweets.get(i);
-        	/*
-        	 * Random coordinates added due to tweets have no coordinates (Twitter doesn't allow anymore exact location of tweets)
-        	 */
-        	st = new SimpleTweet(t.getUser().getScreenName(), t.getGeoLocation()+"", ((Math.random() * (180 - (-180))) - 180)+"", ((Math.random() * (180 - (-180))) - 180)+"");
-       	 sts.add(st);
-        }
-        
         
         return sts;
 	}

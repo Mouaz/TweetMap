@@ -1,133 +1,221 @@
-<%@ page language="java" contentType="text/html; charset=windows-1256"
-    pageEncoding="windows-1256"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">.gm-style .gm-style-mtc label,.gm-style .gm-style-mtc div{font-weight:400}</style><style type="text/css">.gm-style-pbc{transition:opacity ease-in-out;background-color:rgba(0,0,0,0.45);text-align:center}.gm-style-pbt{font-size:22px;color:white;font-family:Roboto,Arial,sans-serif;position:relative;margin:0;top:50%;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%)}</style><link type="text/css" rel="stylesheet" href="./MarkerClusterer v3 Speed Test Example_files/css"><style type="text/css">.gm-style .gm-style-cc span,.gm-style .gm-style-cc a,.gm-style .gm-style-mtc div{font-size:10px}</style><style type="text/css">@media print {  .gm-style .gmnoprint, .gmnoprint {    display:none  }}@media screen {  .gm-style .gmnoscreen, .gmnoscreen {    display:none  }}</style><style type="text/css">.gm-style{font-family:Roboto,Arial,sans-serif;font-size:11px;font-weight:400;text-decoration:none}.gm-style img{max-width:none}</style>
-    
-    <title>MarkerClusterer v3 Speed Test Example</title>
-
+<%@ page language="java" contentType="text/html;"%>
+<!DOCTYPE html>
+<html ng-app="tweetAPP">
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Tweet Map</title>
     <style>
-      body {
+      html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
-        font-family: Arial;
-        font-size: 14px;
-      }
-      #panel {
-        float: left;
-        width: 300px;
-        height: 550px;
-      }
-      #map-container {
-        margin-left: 300px;
       }
       #map {
-        width: 100%;
-        height: 550px;
-      }
-      #markerlist {
-        height: 400px;
-        margin: 10px 5px 0 10px;
-        overflow: auto;
-      }
-      .title {
-        border-bottom: 1px solid #e0ecff;
-        overflow: hidden;
-        width: 256px;
-        cursor: pointer;
-        padding: 2px 0;
-        display: block;
-        color: #000;
-        text-decoration: none;
-      }
-      .title:visited {
-        color: #000;
-      }
-      .title:hover {
-        background: #e0ecff;
-      }
-      #timetaken {
-        color: #f00;
-      }
-      .info {
-        width: 200px;
-      }
-      .info img {
-        border: 0;
-      }
-      .info-body {
-        width: 200px;
-        height: 200px;
-        line-height: 200px;
-        margin: 2px 0;
-        text-align: center;
-        overflow: hidden;
-      }
-      .info-img {
-        height: 220px;
-        width: 200px;
+        height: 100%;
       }
     </style>
-
-    <script src="../assets/api.js"></script>
-    <script src="../data.json"></script>
-    <script src="../speed_test.js"></script>
-    <script type="text/javascript" src="../assets/markerclusterer.js"></script>
-
-	
-	<script src="../assets/common.js"></script>
-	<script src="../assets/controls.js"></script>
-	<script src="../assets/ga.js"></script>
-	<script src="../assets/infowindow.js"></script>
-	<script src="../assets/map.js"></script>
-	<script src="../assets/marker.js"></script>
-	<script src="../assets/onion.js"></script>
-	<script src="../assets/overlay.js"></script>
-	<script src="../assets/stats.js"></script>
-	<script src="../assets/util.js"></script>
-	
-    <script>
-      google.maps.event.addDomListener(window, 'load', speedTest.init);
-    </script>
-    <script>
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-12846745-20']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-
+  </head>
   <body>
-    <div id="panel">
-      <h3>An example of MarkerClusterer v3</h3>
+  <div  ng-controller="tweetCtrl"></div>
+    <div id="map" ></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGws0mfGsHSyKGyjRz9odYtixQyXPYMHU&callback=initMap">
+    </script>
+    <script>
 
-      <div>
-        <input type="checkbox" checked="checked" id="usegmm">
-        <span>Use MarkerClusterer</span>
-      </div>
+       function initMap() {
+loadTweets();
+       }
+        function loadTweets(){
+        	var labels = ['tweet','tweet'];
+        	var markers = []
+        	
+            
+            var data_file = "http://localhost:8080/TweetMap/webresources/myresource";
+            var http_request = new XMLHttpRequest();
+            try{
+               // Opera 8;.0+, Firefox, Chrome, Safari
+               http_request = new XMLHttpRequest();
+            }catch (e){
+               // Internet Explorer Browsers
+               try{
+                  http_request = new ActiveXObject("Msxml2.XMLHTTP");
+					
+               }catch (e) {
+				
+                  try{
+                     http_request = new ActiveXObject("Microsoft.XMLHTTP");
+                  }catch (e){
+                     // Something went wrong
+                     alert("Your browser broke!");
+                     return false;
+                  }
+					
+               }
+            }
+			
+            http_request.onreadystatechange = function(){
+	               var markers_ = [];
+	               var map = new google.maps.Map(document.getElementById('map'), {
+	                   zoom: 3,
+	                   center: {lat: 30.0444 , lng: 31.2357}
+	                 });
+               if (http_request.readyState == 4  ){
+                  // Javascript function JSON.parse to parse JSON data
+                  var jsonObj = JSON.parse(http_request.responseText);
+                  //alert(jsonObj);
+                  for (var j=0; j < jsonObj.length; j++) {
+                  var marker =  new google.maps.Marker({
+                      position: {lat: parseFloat(jsonObj[j].lat), lng: parseFloat(jsonObj[j].lon)},
+                    	title: jsonObj[j].userName
+                    });
+                    var infowindow = new google.maps.InfoWindow({
+                        content: jsonObj[j].content
+                      });
+                    marker.addListener('click', function() {
+                        map.setZoom(8);
+                        map.setCenter(marker.getPosition());
+                        infowindow.open(marker.get('map'), marker);
+                      });
+                    markers_.push(marker);
+               }
+              } 
+               //alert(markers_.length);
+               var markerCluster = new MarkerClusterer(map, markers_,
+                       {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+               //return markers_;
+               }
+            
+			
+            http_request.open("GET", data_file, true);
+            http_request.send();
 
-      <div>
-        Markers:
-        <select id="nummarkers">
-          <option value="10">10</option>
-          <option value="50">50</option>
-          <option value="100" selected="selected">100</option>
-          <option value="500">500</option>
-          <option value="1000">1000</option>
-        </select>
+            
+         }
+        
 
-        <span>Time used: <span id="timetaken">1</span> ms</span>
-      </div>
+      // Trying doing it by angularjs but javascript doesn't reveal what's wrong with it
+         //
+        /*
+        alert("shezo");
+        var markers = [];
+        var appt = angular.module('tweetAPP', ['ngRoute']);
 
-      <strong>Marker List</strong>
-      <div id="markerlist"><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Atardecer en Embalse</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">In Memoriam Antoine de Saint Exupéry</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Rosina Lamberti,Sunset,Templestowe , Victoria, Australia</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">kin-dza-dza</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Arenal</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Maria Alm</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Wheatfield in afternoon light</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Burg Hohenwerfen</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Thunderstorm in Martinique</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Al tard</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Hintersee bei Ramsau</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Antelope Canyon, Ray of Light</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Val Verzasca - Switzerland</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Guggenheim and spider</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Mostar</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Bora Bora</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Nivane in Ørsta</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">italy-toscany</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Gentoo Penguins at Sunrise</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Les Mines</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Az őrszem</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Amanecer en el Salar de Uyuni</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">tulip</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Warsaw Bridge 01 [www.wierzchon.com]</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Облако над вулканом Камень. www.photo-sturm.ru</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Hospiz</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">icy_chains_1_hdr_web</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Marble Cave</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">fukushimagata</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">вулкан Карымский</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Torrent de pareis</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Sr. da Pedra</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">zaldiak</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">TIBAUM-BIZZAR</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Aurora borealis</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Water Cuts Rock</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">albufera</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Boulzojavri</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Richmond Deer</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Buci Seine - Looking Up</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Mercury Bay Sunrise</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Adelie-Prat- Kratzmaier</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Infrared Mediterranean Heat</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Vizivarázs</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Wave</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Leoparden</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Sunset Beach Walker</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Wat  Suwan  Kuha  or  Wat  Tham, Phang Nga, Winner Unusual Location April 2008</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Landwasser-Viadukt - This is an unofficial photo point. Just follow the footpath up from the official one, until the clearing.</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Oak tree in winter</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">albufera</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Cold morning</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Lagos de Montebello, México</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Majestically Still</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Gjevilvatnet lake in Oppdal</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Lijiang River, near Yangshuo, China</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Después de la lluvia</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Kloster Höglwörth</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Cape Flattery (infrared)</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">O'Keeffe ?</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">nyhavn</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Embarcador 1</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">FREE-SPIRIT</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Reflection under the Bridge</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Baron's Haugh, Scotland</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Őszi pompa</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Pipacsálom</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Once in a Blue Moon....</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Frente a la Cascada de Gujuli -103 m.-</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">A vadon szava</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Laguna verde e Vulcano Licancabur</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Mikor a harangszó is szebben hallik</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Dawn at Bagan, Myanmar (Burma)</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Báláim</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Silhouette</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Mount Ararat, Yerevan, Armenia</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Dobel, Albrecht-Hütte</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Fényözön</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Champlain Lookout</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Gizeh Pyramids, Cairo</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Martigues, miroir aux oiseaux</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">fire works</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Gondola</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">tanada</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Parque Natural de Calblanque</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Nyáridéző</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Etangs près de Dijon</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">melbourne sunset over the yarra river</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">myoujyousan</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Sydney</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Në fushë të Pallaticesë</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Morning Glory</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">A lake on Gasherbrum glacier</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Half Dome Mtn, Yosemite Nat Park,  CA</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Tulips and Windmills</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Oper-Sydney</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Bombay Beach, Salton Sea, CA</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Kin-dza-dza 2</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Isteni színjáték</a></div><div><a href="https://googlemaps.github.io/js-marker-clusterer/examples/speed_test_example.html#" class="title">Twilight Drive</a></div></div>
-    </div>
-    <div id="map-container">
-      <div id="map" style="position: relative; overflow: hidden;"><div style="height: 100%; width: 100%; position: absolute; background-color: rgb(229, 227, 223);"><div class="gm-style" style="position: absolute; left: 0px; top: 0px; overflow: hidden; width: 100%; height: 100%; z-index: 0;"><div style="position: absolute; left: 0px; top: 0px; overflow: hidden; width: 100%; height: 100%; z-index: 0; cursor: url(&quot;https://maps.gstatic.com/mapfiles/openhand_8_8.cur&quot;) 8 8, default;"><div style="position: absolute; left: 0px; top: 0px; z-index: 1; width: 100%; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 0, 0);"><div style="position: absolute; left: 0px; top: 0px; z-index: 100; width: 100%;"><div style="position: absolute; left: 0px; top: 0px; z-index: 0;"><div aria-hidden="true" style="position: absolute; left: 0px; top: 0px; z-index: 1; visibility: inherit;"><div style="width: 256px; height: 256px; position: absolute; left: 735px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 479px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 735px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 735px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 991px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 479px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 479px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 991px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 991px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1247px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 223px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1247px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1247px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 223px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 223px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1503px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: -33px; top: 143px;"></div><div style="width: 256px; height: 256px; position: absolute; left: -33px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1503px; top: -113px;"></div><div style="width: 256px; height: 256px; position: absolute; left: -33px; top: 399px;"></div><div style="width: 256px; height: 256px; position: absolute; left: 1503px; top: 399px;"></div></div></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 101; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 102; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 103; width: 100%;"><div style="position: absolute; left: 0px; top: 0px; z-index: -1;"><div aria-hidden="true" style="position: absolute; left: 0px; top: 0px; z-index: 1; visibility: inherit;"><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 735px; top: 143px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 479px; top: 143px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 735px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 735px; top: 399px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 991px; top: 143px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 479px; top: 399px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 479px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 991px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 991px; top: 399px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1247px; top: 143px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 223px; top: 143px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1247px; top: 399px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1247px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 223px; top: 399px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 223px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1503px; top: 143px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: -33px; top: 143px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: -33px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1503px; top: -113px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: -33px; top: 399px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 1503px; top: 399px;"><canvas draggable="false" height="256" width="256" style="-webkit-user-select: none; position: absolute; left: 0px; top: 0px; height: 256px; width: 256px;"></canvas></div></div></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 0;"><div aria-hidden="true" style="position: absolute; left: 0px; top: 0px; z-index: 1; visibility: inherit;"><div style="position: absolute; left: 735px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(1)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1503px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(2)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 479px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(2)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 735px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(3)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 735px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(4)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: -33px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(5)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 991px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(5)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1503px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(6)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 479px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(6)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1503px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(7)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 479px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(7)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: -33px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(8)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 991px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(8)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 991px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(9)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: -33px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(9)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 223px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(10)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1247px; top: 143px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(10)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1247px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(11)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 223px; top: 399px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(11)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 1247px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(12)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 223px; top: -113px; transition: opacity 200ms ease-out;"><div style="z-index: 0;"><img src="./MarkerClusterer v3 Speed Test Example_files/vt(12)" draggable="false" alt="" style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div></div></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 2; width: 100%; height: 100%; transition-duration: 0.3s; opacity: 0; display: none;" class="gm-style-pbc"><p class="gm-style-pbt">Use two fingers to move the map</p></div><div style="position: absolute; left: 0px; top: 0px; z-index: 3; width: 100%; height: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 4; width: 100%; transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 0, 0);"><div style="position: absolute; left: 0px; top: 0px; z-index: 104; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 105; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 106; width: 100%;"><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 469.842px; left: 1293.8px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">4</div><div style="background-image: url(&quot;../images/m2.png&quot;); background-position: 0px 0px; height: 56px; line-height: 56px; width: 56px; text-align: center; cursor: pointer; top: 215.521px; left: 500.694px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">39</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 489.172px; left: 865.848px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">5</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 343.024px; left: 1236.09px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div></div><div style="background-image: url(&quot;../images/m2.png&quot;); background-position: 0px 0px; height: 56px; line-height: 56px; width: 56px; text-align: center; cursor: pointer; top: 257.949px; left: 1158.11px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">11</div><div></div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 145.252px; left: 470.376px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">6</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 548.755px; left: 284.978px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 256.45px; left: 848.411px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">5</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 179.449px; left: 909.782px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 236.015px; left: 1250.02px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 244.665px; left: 428.37px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">7</div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 121.817px; left: 578.769px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div></div><div></div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 348.938px; left: 733.097px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">4</div><div></div><div style="background-image: url(&quot;../images/m1.png&quot;); background-position: 0px 0px; height: 53px; line-height: 53px; width: 53px; text-align: center; cursor: pointer; top: 247.939px; left: 579.532px; color: black; position: absolute; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">2</div><div></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 107; width: 100%;"></div></div></div><div style="margin-left: 5px; margin-right: 5px; z-index: 1000000; position: absolute; left: 0px; bottom: 0px;"><a target="_blank" href="https://maps.google.com/maps?ll=39.91,116.38&amp;z=2&amp;t=m&amp;hl=en-US&amp;gl=US&amp;mapclient=apiv3" title="Click to see this area on Google Maps" style="position: static; overflow: visible; float: none; display: inline;"><div style="width: 66px; height: 26px; cursor: pointer;"><img src="./MarkerClusterer v3 Speed Test Example_files/google4.png" draggable="false" style="position: absolute; left: 0px; top: 0px; width: 66px; height: 26px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px;"></div></a></div><div style="background-color: white; padding: 15px 21px; border: 1px solid rgb(171, 171, 171); font-family: Roboto, Arial, sans-serif; color: rgb(34, 34, 34); box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 16px; z-index: 10000002; display: none; width: 256px; height: 148px; position: absolute; left: 660px; top: 185px;"><div style="padding: 0px 0px 10px; font-size: 16px;">Map Data</div><div style="font-size: 13px;">Map data ©2016</div><div style="width: 13px; height: 13px; overflow: hidden; position: absolute; opacity: 0.7; right: 12px; top: 12px; z-index: 10000; cursor: pointer;"><img src="./MarkerClusterer v3 Speed Test Example_files/mapcnt6.png" draggable="false" style="position: absolute; left: -2px; top: -336px; width: 59px; height: 492px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div class="gmnoprint" style="z-index: 1000001; position: absolute; right: 166px; bottom: 0px; width: 87px;"><div draggable="false" class="gm-style-cc" style="-webkit-user-select: none; height: 14px; line-height: 14px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a style="color: rgb(68, 68, 68); text-decoration: none; cursor: pointer; display: none;">Map Data</a><span>Map data ©2016</span></div></div></div><div class="gmnoscreen" style="position: absolute; right: 0px; bottom: 0px;"><div style="font-family: Roboto, Arial, sans-serif; font-size: 11px; color: rgb(68, 68, 68); direction: ltr; text-align: right; background-color: rgb(245, 245, 245);">Map data ©2016</div></div><div class="gmnoprint gm-style-cc" draggable="false" style="z-index: 1000001; -webkit-user-select: none; height: 14px; line-height: 14px; position: absolute; right: 95px; bottom: 0px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a href="https://www.google.com/intl/en-US_US/help/terms_maps.html" target="_blank" style="text-decoration: none; cursor: pointer; color: rgb(68, 68, 68);">Terms of Use</a></div></div><div style="width: 25px; height: 25px; overflow: hidden; display: none; margin: 10px 14px; position: absolute; top: 0px; right: 0px;"><img src="./MarkerClusterer v3 Speed Test Example_files/sv9.png" draggable="false" class="gm-fullscreen-control" style="position: absolute; left: -52px; top: -86px; width: 164px; height: 175px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px;"></div><div draggable="false" class="gm-style-cc" style="-webkit-user-select: none; height: 14px; line-height: 14px; position: absolute; right: 0px; bottom: 0px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a target="_new" title="Report errors in the road map or imagery to Google" href="https://www.google.com/maps/@39.91,116.38,2z/data=!10m1!1e1!12b1?source=apiv3&amp;rapsrc=apiv3" style="font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); text-decoration: none; position: relative;">Report a map error</a></div></div><div class="gmnoprint gm-bundled-control gm-bundled-control-on-bottom" draggable="false" controlwidth="28" controlheight="93" style="margin: 10px; -webkit-user-select: none; position: absolute; bottom: 107px; right: 28px;"><div class="gmnoprint" controlwidth="28" controlheight="55" style="position: absolute; left: 0px; top: 38px;"><div draggable="false" style="-webkit-user-select: none; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; border-radius: 2px; cursor: pointer; background-color: rgb(255, 255, 255); width: 28px; height: 55px;"><div title="Zoom in" style="position: relative; width: 28px; height: 27px; left: 0px; top: 0px;"><div style="overflow: hidden; position: absolute; width: 15px; height: 15px; left: 7px; top: 6px;"><img src="./MarkerClusterer v3 Speed Test Example_files/tmapctrl.png" draggable="false" style="position: absolute; left: 0px; top: 0px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 120px; height: 54px;"></div></div><div style="position: relative; overflow: hidden; width: 67%; height: 1px; left: 16%; background-color: rgb(230, 230, 230); top: 0px;"></div><div title="Zoom out" style="position: relative; width: 28px; height: 27px; left: 0px; top: 0px;"><div style="overflow: hidden; position: absolute; width: 15px; height: 15px; left: 7px; top: 6px;"><img src="./MarkerClusterer v3 Speed Test Example_files/tmapctrl.png" draggable="false" style="position: absolute; left: 0px; top: -15px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 120px; height: 54px;"></div></div></div></div><div class="gm-svpc" controlwidth="28" controlheight="28" style="background-color: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; border-radius: 2px; width: 28px; height: 28px; cursor: url(&quot;https://maps.gstatic.com/mapfiles/openhand_8_8.cur&quot;) 8 8, default; position: absolute; left: 0px; top: 0px;"><div style="position: absolute; left: 1px; top: 1px;"></div><div style="position: absolute; left: 1px; top: 1px;"><div aria-label="Street View Pegman Control" style="width: 26px; height: 26px; overflow: hidden; position: absolute; left: 0px; top: 0px;"><img src="./MarkerClusterer v3 Speed Test Example_files/cb_scout5.png" draggable="false" style="position: absolute; left: -147px; top: -26px; width: 215px; height: 835px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div aria-label="Pegman is on top of the Map" style="width: 26px; height: 26px; overflow: hidden; position: absolute; left: 0px; top: 0px; visibility: hidden;"><img src="./MarkerClusterer v3 Speed Test Example_files/cb_scout5.png" draggable="false" style="position: absolute; left: -147px; top: -52px; width: 215px; height: 835px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div aria-label="Street View Pegman Control" style="width: 26px; height: 26px; overflow: hidden; position: absolute; left: 0px; top: 0px; visibility: hidden;"><img src="./MarkerClusterer v3 Speed Test Example_files/cb_scout5.png" draggable="false" style="position: absolute; left: -147px; top: -78px; width: 215px; height: 835px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div></div><div class="gmnoprint" controlwidth="28" controlheight="0" style="display: none; position: absolute;"><div title="Rotate map 90 degrees" style="width: 28px; height: 28px; overflow: hidden; position: absolute; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; cursor: pointer; background-color: rgb(255, 255, 255); display: none;"><img src="./MarkerClusterer v3 Speed Test Example_files/tmapctrl4.png" draggable="false" style="position: absolute; left: -141px; top: 6px; width: 170px; height: 54px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div class="gm-tilt" style="width: 28px; height: 28px; overflow: hidden; position: absolute; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; top: 0px; cursor: pointer; background-color: rgb(255, 255, 255);"><img src="./MarkerClusterer v3 Speed Test Example_files/tmapctrl4.png" draggable="false" style="position: absolute; left: -141px; top: -13px; width: 170px; height: 54px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div></div><div class="gmnoprint" style="margin: 10px; z-index: 0; position: absolute; cursor: pointer; left: 0px; top: 0px;"><div class="gm-style-mtc" style="float: left;"><div draggable="false" title="Show street map" style="direction: ltr; overflow: hidden; text-align: center; position: relative; color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; -webkit-user-select: none; font-size: 11px; background-color: rgb(255, 255, 255); padding: 8px; border-bottom-left-radius: 2px; border-top-left-radius: 2px; -webkit-background-clip: padding-box; background-clip: padding-box; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; min-width: 21px; font-weight: 500;">Map</div><div style="background-color: white; z-index: -1; padding: 2px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; position: absolute; left: 0px; top: 29px; text-align: left; display: none;"><div draggable="false" title="Show street map with terrain" style="color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; -webkit-user-select: none; font-size: 11px; background-color: rgb(255, 255, 255); padding: 6px 8px 6px 6px; direction: ltr; text-align: left; white-space: nowrap;"><span role="checkbox" style="box-sizing: border-box; position: relative; line-height: 0; font-size: 0px; margin: 0px 5px 0px 0px; display: inline-block; background-color: rgb(255, 255, 255); border: 1px solid rgb(198, 198, 198); border-radius: 1px; width: 13px; height: 13px; vertical-align: middle;"><div style="position: absolute; left: 1px; top: -2px; width: 13px; height: 11px; overflow: hidden; display: none;"><img src="./MarkerClusterer v3 Speed Test Example_files/imgs8.png" draggable="false" style="position: absolute; left: -52px; top: -44px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 68px; height: 67px;"></div></span><label style="vertical-align: middle; cursor: pointer;">Terrain</label></div></div></div><div class="gm-style-mtc" style="float: left;"><div draggable="false" title="Show satellite imagery" style="direction: ltr; overflow: hidden; text-align: center; position: relative; color: rgb(86, 86, 86); font-family: Roboto, Arial, sans-serif; -webkit-user-select: none; font-size: 11px; background-color: rgb(255, 255, 255); padding: 8px; border-bottom-right-radius: 2px; border-top-right-radius: 2px; -webkit-background-clip: padding-box; background-clip: padding-box; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; border-left: 0px; min-width: 37px;">Satellite</div><div style="background-color: white; z-index: -1; padding: 2px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; position: absolute; right: 0px; top: 29px; text-align: left; display: none;"><div draggable="false" title="Show imagery with street names" style="color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; -webkit-user-select: none; font-size: 11px; background-color: rgb(255, 255, 255); padding: 6px 8px 6px 6px; direction: ltr; text-align: left; white-space: nowrap;"><span role="checkbox" style="box-sizing: border-box; position: relative; line-height: 0; font-size: 0px; margin: 0px 5px 0px 0px; display: inline-block; background-color: rgb(255, 255, 255); border: 1px solid rgb(198, 198, 198); border-radius: 1px; width: 13px; height: 13px; vertical-align: middle;"><div style="position: absolute; left: 1px; top: -2px; width: 13px; height: 11px; overflow: hidden;"><img src="./MarkerClusterer v3 Speed Test Example_files/imgs8.png" draggable="false" style="position: absolute; left: -52px; top: -44px; -webkit-user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 68px; height: 67px;"></div></span><label style="vertical-align: middle; cursor: pointer;">Labels</label></div></div></div></div></div></div></div>
-    </div>
-  
+        function generateMarkers($scope,$http) {
+        	var url = "http://localhost:8080/TweetMap/webresources/myresource";
 
-</body></html>
+        	   $http.get(url).success( function(response) {
+            	   alert(response);
+        		   var markers = [];
+        		   for (var j=0; j < response.length; j++) {
+                   	var marker =  new google.maps.Marker({
+                           position: {lat: data[j].lat, lng:data[j].lon},
+                           label: labels[i % labels.length],
+                         	title: data[j].userName
+                         });
+                         var infowindow = new google.maps.InfoWindow({
+                             content: data[j].content
+                           });
+                         marker.addListener('click', function() {
+                             map.setZoom(8);
+                             map.setCenter(marker.getPosition());
+                             infowindow.open(marker.get('map'), marker);
+                           });
+                         markers.push(marker);
+                   } 
+                   $scope.markers = markers;
+                   return markers;
+        	   });
+        	}
+        markers = function() {
+        	  $scope.generateMarkers($http);
+        	};
+    	//markers = generateMarkers();
+         appt.controller('tweetCtrl', function() {
+        	$scope.getTweetsFromLocalhost = function() {
+            $http.get("http://localhost:8080/TweetMap/webresources/myresource")
+            .success(function(response) {
+                alert(response);
+                $scope.content = response.data;
+            
+        	});
+        	};
+            $scope.getTweetsFromLocalhost();
+        });
+        ()alert("shezo tani");
+        appt.controller("tweetCtrl", function($scope, $http) {   
+        alert("shezo talet");
+        function _refreshTweetData() {  
+        	alert("shezo taleti");
+            $http({  
+                method : 'GET',  
+                url : 'http://localhost:8080/TweetMap/webresources/myresource'  
+            }).then(function successCallback(response) { 
+                alert(response); 
+                for (var j=0; j < response.length; j++) {
+                	var marker =  new google.maps.Marker({
+                        position: {lat: data[j].lat, lng:data[j].lon},
+                        label: labels[i % labels.length],
+                      	title: data[j].userName
+                      });
+                      var infowindow = new google.maps.InfoWindow({
+                          content: data[j].content
+                        });
+                      marker.addListener('click', function() {
+                          map.setZoom(8);
+                          map.setCenter(marker.getPosition());
+                          infowindow.open(marker.get('map'), marker);
+                        });
+                      markers.push(marker);
+                }
+                //$scope.simpletweets = response.data;  
+            }, function errorCallback(response) {  
+                console.log(response.statusText);  
+            });  
+        }  
+   
+        function _success(response) {  
+        	_refreshTweetData(); 
+        }  
+   
+        function _error(response) {  
+            console.log(response.statusText);  
+        }  
+     
+    });
+        // Add some markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        var markers = locations.map(function(location, i) {
+          var marker =  new google.maps.Marker({
+            position: location,
+            label: labels[i % labels.length],
+          	title: 'yaaaaaaay'
+          });
+          var infowindow = new google.maps.InfoWindow({
+              content: 'a messagy'
+            });
+          marker.addListener('click', function() {
+              map.setZoom(8);
+              map.setCenter(marker.getPosition());
+              infowindow.open(marker.get('map'), marker);
+            });
+          return marker;
+        });
+        
+        // Add a marker clusterer to manage the markers.
+       }
+      var locations = [
+        {lat: -31.563910, lng: 147.154312}
+      ]
+      */
+    </script>
+  </body>
+</html>
