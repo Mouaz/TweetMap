@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.underdog.jersey</groupId>
+    <artifactId>jersey-getting-started</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>jersey-getting-started Jersey Webapp</name>
+    <build>
+        <finalName>jersey-getting-started</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <!-- Run the application using "mvn embedded-glassfish:run" -->
+            <plugin>
+                <groupId>org.glassfish</groupId>
+                <artifactId>maven-embedded-glassfish-plugin</artifactId>
+                <version>${glassfish.version}</version>
+                <configuration>
+                    <goalPrefix>embedded-glassfish</goalPrefix>
+                    <app>C:/Users/ascom/Desktop/Vodafone task/target/${project.build.finalName}.war</app>
+                    <autoDelete>true</autoDelete>
+                    <port>8080</port>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-servlet</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                        <version>3.0.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j-core -->
+<dependency>
+    <groupId>org.twitter4j</groupId>
+    <artifactId>twitter4j-core</artifactId>
+    <version>4.0.5</version>
+</dependency>
+    
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-json -->
+<dependency>
+    <groupId>com.sun.jersey</groupId>
+    <artifactId>jersey-json</artifactId>
+    <version>1.19.2</version>
+</dependency>
+        <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-servlet -->
+<dependency>
+    <groupId>com.sun.jersey</groupId>
+    <artifactId>jersey-servlet</artifactId>
+    <version>1.19.2</version>
+</dependency>
+        <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client -->
+<dependency>
+    <groupId>com.sun.jersey</groupId>
+    <artifactId>jersey-client</artifactId>
+    <version>1.19.2</version>
+</dependency>
+        <dependency>
+            <groupId>org.glassfish.extras</groupId>
+            <artifactId>glassfish-embedded-web</artifactId>
+            <version>${glassfish.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-core</artifactId>
+    <version>2.8.3</version>
+</dependency>
+        <!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j-stream -->
+<dependency>
+    <groupId>org.twitter4j</groupId>
+    <artifactId>twitter4j-stream</artifactId>
+    <version>4.0.5</version>
+</dependency>
+        
+    </dependencies>
+    <properties>
+        <jersey.version>1.20-SNAPSHOT</jersey.version>
+        <glassfish.version>3.1.1</glassfish.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+</project>
